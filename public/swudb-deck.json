@@ -1,0 +1,119 @@
+{
+    "metadata": {
+        "name": "Boba Yellow",
+        "author": "vertigodragon"
+    },
+    "leader": {
+        "id": "SOR_015",
+        "count": 1
+    },
+    "secondleader": null,
+    "base": {
+        "id": "SOR_029",
+        "count": 1
+    },
+    "deck": [
+        {
+            "id": "SOR_217",
+            "count": 2
+        },
+        {
+            "id": "SOR_182",
+            "count": 2
+        },
+        {
+            "id": "SOR_211",
+            "count": 3
+        },
+        {
+            "id": "SOR_202",
+            "count": 3
+        },
+        {
+            "id": "SOR_228",
+            "count": 3
+        },
+        {
+            "id": "SOR_207",
+            "count": 3
+        },
+        {
+            "id": "SOR_178",
+            "count": 3
+        },
+        {
+            "id": "SOR_204",
+            "count": 3
+        },
+        {
+            "id": "SOR_203",
+            "count": 3
+        },
+        {
+            "id": "SOR_208",
+            "count": 2
+        },
+        {
+            "id": "SOR_213",
+            "count": 2
+        },
+        {
+            "id": "SOR_220",
+            "count": 3
+        },
+        {
+            "id": "SOR_201",
+            "count": 3
+        },
+        {
+            "id": "SOR_222",
+            "count": 3
+        },
+        {
+            "id": "SOR_180",
+            "count": 3
+        },
+        {
+            "id": "SOR_179",
+            "count": 3
+        },
+        {
+            "id": "SOR_186",
+            "count": 3
+        },
+        {
+            "id": "SOR_184",
+            "count": 3
+        }
+    ],
+    "sideboard": [
+        {
+            "id": "SHD_185",
+            "count": 3
+        },
+        {
+            "id": "SHD_188",
+            "count": 3
+        },
+        {
+            "id": "SHD_190",
+            "count": 3
+        },
+        {
+            "id": "SHD_224",
+            "count": 3
+        },
+        {
+            "id": "SHD_207",
+            "count": 3
+        },
+        {
+            "id": "SHD_208",
+            "count": 2
+        },
+        {
+            "id": "SOR_219",
+            "count": 2
+        }
+    ]
+}
