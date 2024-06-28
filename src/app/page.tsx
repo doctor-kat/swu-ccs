@@ -1,8 +1,9 @@
 "use client";
 
 import { swuCardsToSWUDBDeck } from "@/app/api/booster/swudb";
-import { getEmptyFilters, getFilters } from "@/app/filter";
+import { filterCards, getEmptyFilters, getFilters } from "@/app/filter";
 import theme from "@/app/theme";
+import { Rarity } from "@/types/card/attributes/Rarity";
 import type { Card } from "@/types/card/Card";
 import {
     ChevronLeft,
@@ -33,6 +34,7 @@ import {
     ListItemText,
     MenuItem,
     OutlinedInput,
+    Paper,
     Select,
     Stack,
     Toolbar,
@@ -63,7 +65,39 @@ export default function Home() {
         return "Loading...";
     }
 
-    // console.log(filterCards(filter, cards));
+    const cards = filterCards(filterGroups, booster).sort((a, b) => {
+        const [aspectA, aspectB] = [a, b].map(
+            (card) =>
+                card.attributes.aspects.data[
+                    card.attributes.aspects.data.length - 1
+                ].attributes.name,
+        );
+        if (aspectA === aspectB) {
+            const [rarityA, rarityB] = [a, b].map(
+                (card) => card.attributes.rarity.data.attributes.name,
+            );
+            if (rarityA === rarityB) {
+                const [costA, costB] = [a, b].map(
+                    (card) => card.attributes.cost,
+                );
+                return costA - costB;
+            } else {
+                const rarityOrder = [
+                    Rarity.LEGENDARY,
+                    Rarity.RARE,
+                    Rarity.UNCOMMON,
+                    Rarity.COMMON,
+                    Rarity.SPECIAL,
+                ];
+                return (
+                    rarityOrder.findIndex((r) => r === rarityA) -
+                    rarityOrder.findIndex((r) => r === rarityB)
+                );
+            }
+        } else {
+            return aspectA > aspectB ? 1 : -1;
+        }
+    });
     const drawerWidth = 240;
     return (
         <Box sx={{ display: "flex" }}>
@@ -148,7 +182,7 @@ export default function Home() {
                 </Box>
             </Drawer>
             <Box
-                component="main"
+                component={Paper}
                 sx={{
                     flexGrow: 1,
                     p: 3,
@@ -179,6 +213,8 @@ export default function Home() {
                                     <FormControl fullWidth>
                                         <InputLabel>{label}</InputLabel>
                                         <Select
+                                            color="primary"
+                                            variant="outlined"
                                             multiple
                                             value={filters
                                                 .filter((f) => f.active)
@@ -211,6 +247,7 @@ export default function Home() {
                                                     {selected.map((value) => (
                                                         <Chip
                                                             key={value}
+                                                            color="primary"
                                                             label={value}
                                                         />
                                                     ))}
@@ -244,7 +281,7 @@ export default function Home() {
                         )}
                     </Grid>
                     <Grid container className="cards" gap={1}>
-                        {booster.map((card, i) => (
+                        {cards.map((card, i) => (
                             <Grid
                                 item
                                 key={i}

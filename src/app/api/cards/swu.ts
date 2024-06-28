@@ -1,6 +1,6 @@
-import { CardsResponse } from "@/types/CardsResponse";
-import { Card } from "@/types/card/Card";
 import { Expansion } from "@/types/card/attributes/Expansion";
+import { Card } from "@/types/card/Card";
+import { CardsResponse } from "@/types/CardsResponse";
 
 export async function getCardsPage({
     locale = "en",
@@ -16,10 +16,10 @@ export async function getCardsPage({
         "filters[variantOf][id][$null]": "true",
         "filters[$and][1][expansion][id][$in][0]": "8", // SHD
         "pagination[page]": String(page),
-        "pagination[pageSize]": "50",
+        "pagination[pageSize]": "15",
     });
-    const response = (
-        await fetch(url + "?" + params)
+    const response = await(
+        await fetch(url + "?" + params),
     ).json() as Promise<CardsResponse>;
     return response;
 }
