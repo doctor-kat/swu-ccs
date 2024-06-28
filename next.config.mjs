@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+    reactStrictMode: false,
     images: {
-        domains: ["cdn.starwarsunlimited.com"],
         remotePatterns: [
             {protocol: "https", hostname: "cdn.starwarsunlimited.com"},
         ],

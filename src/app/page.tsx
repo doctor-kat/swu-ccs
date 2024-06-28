@@ -1,338 +1,354 @@
 "use client";
 
-import { groupBy, sortByAspectThenCost } from "@/app/sort";
+import { swuCardsToSWUDBDeck } from "@/app/api/booster/swudb";
+import { getEmptyFilters, getFilters } from "@/app/filter";
 import theme from "@/app/theme";
-import { ArtSize } from "@/types/card/Art";
-import { Aspect } from "@/types/card/attributes/Aspect";
-import { Rarity } from "@/types/card/attributes/Rarity";
-import { Type } from "@/types/card/attributes/Type";
-import { Card } from "@/types/card/Card";
+import type { Card } from "@/types/card/Card";
 import {
-    CheckBox,
     ChevronLeft,
     ChevronRight,
     CopyAll,
-    ExpandMore,
     MenuOpen,
     OpenInBrowser,
     Search,
 } from "@mui/icons-material";
 import {
-    Accordion,
-    AccordionDetails,
-    AccordionSummary,
     AppBar,
     Box,
+    Checkbox,
+    Chip,
+    Dialog,
     Divider,
     Drawer,
     FormControl,
+    Grid,
     IconButton,
     Input,
     InputAdornment,
+    InputLabel,
     List,
     ListItem,
     ListItemButton,
     ListItemIcon,
     ListItemText,
+    MenuItem,
+    OutlinedInput,
+    Select,
     Stack,
     Toolbar,
     Typography,
 } from "@mui/material";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import Image from "next/image";
 import React, { useEffect, useState } from "react";
-
-function mapCardArtFront(cards: Card[]): React.JSX.Element[] {
-    return cards.map((card, i) => {
-        const type: Type = card.attributes.type.data.attributes.name;
-        const isBaseOrLeader = [Type.BASE, Type.LEADER].includes(type);
-        return (
-            <img
-                key={i}
-                src={
-                    card.attributes.artFront.data.attributes.formats[
-                        ArtSize.CARD
-                    ]?.url
-                }
-                width={isBaseOrLeader ? 400 : 286}
-                height={isBaseOrLeader ? 286 : 400}
-                alt={card.attributes.title}
-            />
-        );
-    });
-}
 
 export default function Home() {
     const [booster, setBooster] = useState<Card[]>([]);
+    const [leftDrawerOpen, setLeftDrawerOpen] = useState(false);
+    const [rightDrawerOpen, setRightDrawerOpen] = useState(false);
+    const [filterGroups, setFilterGroups] = useState(getEmptyFilters());
+    const [modalOpen, setModalOpen] = useState(false);
+
     useEffect(() => {
         fetch(`/api/booster?count=6`, {
             cache: "no-store",
         })
             .then((res) => res.json())
-            .then((booster) => setBooster(booster));
+            .then((booster) => {
+                setBooster(booster);
+                setFilterGroups(getFilters(booster));
+            });
     }, []);
-
-    const [leftDrawerOpen, setLeftDrawerOpen] = useState(false);
-    const [rightDrawerOpen, setRightDrawerOpen] = useState(false);
 
     if (!booster?.length) {
         return "Loading...";
     }
 
-    sortByAspectThenCost(booster);
-    const { keywords, traits } = groupBy(booster);
-
-    const join = (data: any) =>
-        data.map((d: any) => d.attributes.name).join(", ");
-
-    // group by name and count
-    const data: any[] = booster.map((card) => ({
-        ...card.attributes,
-        id: card.id,
-        aspects: join(card.attributes.aspects.data),
-        type: card.attributes.type.data.attributes.name,
-        traits: join(card.attributes.traits.data),
-        arena: join(card.attributes.arenas.data),
-        keywords: join(card.attributes.keywords.data),
-        rarity: card.attributes.rarity.data.attributes.name,
-        expansion: card.attributes.expansion.data.attributes.name,
-    }));
-    const columns: GridColDef<typeof data>[] = [
-        { field: "title", headerName: "name" },
-    ];
-
+    // console.log(filterCards(filter, cards));
     const drawerWidth = 240;
     return (
-        <>
-            <Box sx={{ display: "flex" }}>
-                <AppBar
-                    position="fixed"
-                    // sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        <Box sx={{ display: "flex" }}>
+            <AppBar position="fixed">
+                <Toolbar
+                    component={Stack}
+                    flexDirection="row"
+                    justifyContent="space-between"
                 >
-                    <Toolbar
-                        component={Stack}
+                    <IconButton
+                        color="inherit"
+                        edge="end"
+                        onClick={() => setLeftDrawerOpen(!leftDrawerOpen)}
+                    >
+                        <MenuOpen />
+                    </IconButton>
+                    <Typography variant="h6" noWrap component="div">
+                        SWU Cardboard Crack Simulator
+                    </Typography>
+                    <IconButton
+                        color="inherit"
+                        edge="end"
+                        onClick={() => setRightDrawerOpen(true)}
+                    >
+                        <MenuOpen />
+                    </IconButton>
+                </Toolbar>
+            </AppBar>
+            <Drawer
+                variant="persistent"
+                open={leftDrawerOpen}
+                sx={{
+                    width: drawerWidth,
+                    flexShrink: 0,
+                    [`& .MuiDrawer-paper`]: {
+                        width: drawerWidth,
+                        boxSizing: "border-box",
+                    },
+                }}
+            >
+                <Toolbar>
+                    <Stack
+                        width="100%"
                         flexDirection="row"
                         justifyContent="space-between"
+                        alignItems="center"
                     >
-                        <IconButton
-                            color="inherit"
-                            edge="end"
-                            onClick={() => setLeftDrawerOpen(!leftDrawerOpen)}
-                        >
-                            <MenuOpen />
+                        <Typography>Filters</Typography>
+                        <IconButton onClick={() => setLeftDrawerOpen(false)}>
+                            <ChevronLeft />
                         </IconButton>
-                        <Typography variant="h6" noWrap component="div">
-                            SWU Cardboard Crack Simulator
-                        </Typography>
-                        <IconButton
-                            color="inherit"
-                            edge="end"
-                            onClick={() => setRightDrawerOpen(true)}
-                        >
-                            <MenuOpen />
-                        </IconButton>
-                    </Toolbar>
-                </AppBar>
-                <Drawer
-                    variant="persistent"
-                    open={leftDrawerOpen}
-                    sx={{
-                        width: drawerWidth,
-                        flexShrink: 0,
-                        [`& .MuiDrawer-paper`]: {
-                            width: drawerWidth,
-                            boxSizing: "border-box",
-                        },
-                    }}
-                >
-                    <Toolbar>
-                        <Stack
-                            width="100%"
-                            flexDirection="row"
-                            justifyContent="space-between"
-                            alignItems="center"
-                        >
-                            <Typography>Filters</Typography>
-                            <IconButton
-                                onClick={() => setLeftDrawerOpen(false)}
-                            >
-                                <ChevronLeft />
-                            </IconButton>
-                        </Stack>
-                    </Toolbar>
-                    <Box sx={{ overflow: "auto" }}>
-                        <List>
-                            {["Open SHD Prerelease Kit"].map((text, index) => (
-                                <ListItem key={text} disablePadding>
-                                    <ListItemButton>
-                                        <ListItemIcon>
-                                            <OpenInBrowser />
-                                        </ListItemIcon>
-                                        <ListItemText primary={text} />
-                                    </ListItemButton>
-                                </ListItem>
-                            ))}
-                        </List>
-                        <Divider />
-                        <List>
-                            <ListItem>
-                                <FormControl variant="standard">
-                                    <Input
-                                        startAdornment={
-                                            <InputAdornment position="start">
-                                                <Search />
-                                            </InputAdornment>
-                                        }
-                                    />
-                                </FormControl>
-                            </ListItem>
-                        </List>
-                        <Divider />
-                        {Object.entries({
-                            Type: [
-                                Type.LEADER,
-                                Type.BASE,
-                                Type.UNIT,
-                                Type.EVENT,
-                                Type.UPGRADE,
-                            ],
-                            Aspect: [
-                                Aspect.BLUE,
-                                Aspect.GREEN,
-                                Aspect.RED,
-                                Aspect.YELLOW,
-                                Aspect.WHITE,
-                                Aspect.BLACK,
-                            ],
-                            Rarity: [
-                                Rarity.LEGENDARY,
-                                Rarity.RARE,
-                                Rarity.UNCOMMON,
-                                Rarity.COMMON,
-                            ],
-                            Keywords: keywords,
-                            Traits: traits,
-                        }).map(([header, options]) => (
-                            <Accordion key={header}>
-                                <AccordionSummary expandIcon={<ExpandMore />}>
-                                    {header}
-                                </AccordionSummary>
-                                <AccordionDetails>
-                                    <List>
-                                        {options.map((text) => (
-                                            <ListItem key={text} disablePadding>
-                                                <ListItemButton>
-                                                    <ListItemIcon>
-                                                        <CheckBox />
-                                                    </ListItemIcon>
-                                                    <ListItemText
-                                                        primary={text}
-                                                    />
-                                                </ListItemButton>
-                                            </ListItem>
-                                        ))}
-                                    </List>
-                                </AccordionDetails>
-                            </Accordion>
-                        ))}
-                    </Box>
-                </Drawer>
-                <Box
-                    component="main"
-                    sx={{
-                        flexGrow: 1,
-                        p: 3,
-                        marginLeft: `-${drawerWidth}px`,
-                        ...(leftDrawerOpen && {
-                            transition: theme.transitions.create("margin", {
-                                easing: theme.transitions.easing.easeOut,
-                                duration:
-                                    theme.transitions.duration.enteringScreen,
-                            }),
-                            marginLeft: 0,
-                        }),
-                        marginRight: `-${drawerWidth}px`,
-                        ...(rightDrawerOpen && {
-                            transition: theme.transitions.create("margin", {
-                                easing: theme.transitions.easing.easeOut,
-                                duration:
-                                    theme.transitions.duration.enteringScreen,
-                            }),
-                            marginRight: 0,
-                        }),
-                    }}
-                >
-                    <Toolbar />
-                    <DataGrid rows={data} columns={columns} />
-                </Box>
-                <Drawer
-                    variant="persistent"
-                    open={rightDrawerOpen}
-                    anchor="right"
-                    sx={{
-                        width: drawerWidth,
-                        flexShrink: 0,
-                        [`& .MuiDrawer-paper`]: {
-                            width: drawerWidth,
-                            boxSizing: "border-box",
-                        },
-                    }}
-                >
-                    <Toolbar>
-                        <Stack
-                            width="100%"
-                            flexDirection="row"
-                            justifyContent="space-between"
-                            alignItems="center"
-                        >
-                            <Typography>Deck</Typography>
-                            <IconButton
-                                onClick={() => setRightDrawerOpen(false)}
-                            >
-                                <ChevronRight />
-                            </IconButton>
-                        </Stack>
-                    </Toolbar>
-                    <Box sx={{ overflow: "auto" }}>
-                        <List>
-                            <ListItem disablePadding>
-                                <ListItemButton>
-                                    <ListItemIcon>1</ListItemIcon>
-                                    <ListItemText primary="Leader" />
-                                </ListItemButton>
-                            </ListItem>
-                            <ListItem disablePadding>
-                                <ListItemButton>
-                                    <ListItemIcon>1</ListItemIcon>
-                                    <ListItemText primary="Base" />
-                                </ListItemButton>
-                            </ListItem>
-                        </List>
-                        <Divider />
-                        <List>
-                            {["Card1", "Card2", "Card3"].map((text, index) => (
-                                <ListItem key={text} disablePadding>
-                                    <ListItemButton>
-                                        <ListItemIcon>1</ListItemIcon>
-                                        <ListItemText primary={text} />
-                                    </ListItemButton>
-                                </ListItem>
-                            ))}
-                        </List>
-                        <Divider />
-                        <List>
-                            <ListItem disablePadding>
+                    </Stack>
+                </Toolbar>
+                <Box sx={{ overflow: "auto" }}>
+                    <List>
+                        {["Open SHD Prerelease Kit"].map((text, index) => (
+                            <ListItem key={text} disablePadding>
                                 <ListItemButton>
                                     <ListItemIcon>
-                                        <CopyAll />
+                                        <OpenInBrowser />
                                     </ListItemIcon>
-                                    <ListItemText primary="Export" />
+                                    <ListItemText primary={text} />
                                 </ListItemButton>
                             </ListItem>
-                        </List>
-                        <Divider />
-                    </Box>
-                </Drawer>
+                        ))}
+                    </List>
+                    <Divider />
+                    <List>
+                        <ListItem>
+                            <FormControl variant="standard">
+                                <Input
+                                    startAdornment={
+                                        <InputAdornment position="start">
+                                            <Search />
+                                        </InputAdornment>
+                                    }
+                                />
+                            </FormControl>
+                        </ListItem>
+                    </List>
+                    <Divider />
+                </Box>
+            </Drawer>
+            <Box
+                component="main"
+                sx={{
+                    flexGrow: 1,
+                    p: 3,
+                    marginLeft: `-${drawerWidth}px`,
+                    ...(leftDrawerOpen && {
+                        transition: theme.transitions.create("margin", {
+                            easing: theme.transitions.easing.easeOut,
+                            duration: theme.transitions.duration.enteringScreen,
+                        }),
+                        marginLeft: 0,
+                    }),
+                    marginRight: `-${drawerWidth}px`,
+                    ...(rightDrawerOpen && {
+                        transition: theme.transitions.create("margin", {
+                            easing: theme.transitions.easing.easeOut,
+                            duration: theme.transitions.duration.enteringScreen,
+                        }),
+                        marginRight: 0,
+                    }),
+                }}
+            >
+                <Toolbar />
+                <Stack gap={2}>
+                    <Grid container className="filters" gap={1}>
+                        {Object.entries(filterGroups).map(
+                            ([label, filters]) => (
+                                <Grid item xs key={label}>
+                                    <FormControl fullWidth>
+                                        <InputLabel>{label}</InputLabel>
+                                        <Select
+                                            multiple
+                                            value={filters
+                                                .filter((f) => f.active)
+                                                .map((f) => f.name)}
+                                            input={
+                                                <OutlinedInput label="Tag" />
+                                            }
+                                            onChange={(event) => {
+                                                const {
+                                                    target: { value },
+                                                } = event;
+                                                const next = {
+                                                    ...filterGroups,
+                                                    [label]: filterGroups[
+                                                        label
+                                                    ].map((f) => ({
+                                                        ...f,
+                                                        active: (
+                                                            value as string[]
+                                                        ).includes(f.name),
+                                                    })),
+                                                };
+                                                setFilterGroups(next);
+                                            }}
+                                            renderValue={(selected) => (
+                                                <Stack
+                                                    flexDirection="row"
+                                                    gap={0.5}
+                                                >
+                                                    {selected.map((value) => (
+                                                        <Chip
+                                                            key={value}
+                                                            label={value}
+                                                        />
+                                                    ))}
+                                                </Stack>
+                                            )}
+                                        >
+                                            {filters.map(
+                                                ({ name, count, active }) => (
+                                                    <MenuItem
+                                                        key={name}
+                                                        value={name}
+                                                    >
+                                                        <Checkbox
+                                                            checked={
+                                                                active ?? false
+                                                            }
+                                                        />
+                                                        <ListItemText
+                                                            primary={name}
+                                                        />
+                                                        <Typography>
+                                                            {count}
+                                                        </Typography>
+                                                    </MenuItem>
+                                                ),
+                                            )}
+                                        </Select>
+                                    </FormControl>
+                                </Grid>
+                            ),
+                        )}
+                    </Grid>
+                    <Grid container className="cards" gap={1}>
+                        {booster.map((card, i) => (
+                            <Grid
+                                item
+                                key={i}
+                                sx={{
+                                    width: card.attributes.artFront.data
+                                        .attributes.formats.card.width,
+                                }}
+                            >
+                                <Image
+                                    src={
+                                        card.attributes.artFront.data.attributes
+                                            .formats.card.url
+                                    }
+                                    alt={card.attributes.title}
+                                    width={
+                                        card.attributes.artFront.data.attributes
+                                            .formats.card.width
+                                    }
+                                    height={
+                                        card.attributes.artFront.data.attributes
+                                            .formats.card.height
+                                    }
+                                />
+                            </Grid>
+                        ))}
+                    </Grid>
+                </Stack>
             </Box>
-        </>
+            <Drawer
+                variant="persistent"
+                open={rightDrawerOpen}
+                anchor="right"
+                sx={{
+                    width: drawerWidth,
+                    flexShrink: 0,
+                    [`& .MuiDrawer-paper`]: {
+                        width: drawerWidth,
+                        boxSizing: "border-box",
+                    },
+                }}
+            >
+                <Toolbar>
+                    <Stack
+                        width="100%"
+                        flexDirection="row"
+                        justifyContent="space-between"
+                        alignItems="center"
+                    >
+                        <Typography>Deck</Typography>
+                        <IconButton onClick={() => setRightDrawerOpen(false)}>
+                            <ChevronRight />
+                        </IconButton>
+                    </Stack>
+                </Toolbar>
+                <Box sx={{ overflow: "auto" }}>
+                    <List>
+                        <ListItem disablePadding>
+                            <ListItemButton>
+                                <ListItemIcon>1</ListItemIcon>
+                                <ListItemText primary="Leader" />
+                            </ListItemButton>
+                        </ListItem>
+                        <ListItem disablePadding>
+                            <ListItemButton>
+                                <ListItemIcon>1</ListItemIcon>
+                                <ListItemText primary="Base" />
+                            </ListItemButton>
+                        </ListItem>
+                    </List>
+                    <Divider />
+                    <List>
+                        {["Card1", "Card2", "Card3"].map((text, index) => (
+                            <ListItem key={text} disablePadding>
+                                <ListItemButton>
+                                    <ListItemIcon>1</ListItemIcon>
+                                    <ListItemText primary={text} />
+                                </ListItemButton>
+                            </ListItem>
+                        ))}
+                    </List>
+                    <Divider />
+                    <List>
+                        <ListItem
+                            disablePadding
+                            onClick={() => setModalOpen(true)}
+                        >
+                            <ListItemButton>
+                                <ListItemIcon>
+                                    <CopyAll />
+                                </ListItemIcon>
+                                <ListItemText primary="Export" />
+                            </ListItemButton>
+                        </ListItem>
+                    </List>
+                    <Divider />
+                </Box>
+            </Drawer>
+            <Dialog open={modalOpen} onClose={() => setModalOpen(false)}>
+                <Box sx={{ p: 2 }}>
+                    <Typography>
+                        {JSON.stringify(swuCardsToSWUDBDeck(booster))}
+                    </Typography>
+                </Box>
+            </Dialog>
+        </Box>
     );
 }
