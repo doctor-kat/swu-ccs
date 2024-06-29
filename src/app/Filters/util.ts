@@ -44,24 +44,31 @@ export function applyFilterGroup({
 
     return cards.filter((card) =>
         Object.entries(filterGroup).reduce<boolean>(
-            (acc, [key, filters]) =>
-                acc ||
-                filters
-                    .filter((f) => f.active)
-                    .reduce<boolean>((acc, filter) => {
-                        const data = (card.attributes[filter.key] as any).data;
-                        if (Array.isArray(data)) {
-                            return (
-                                acc ||
-                                data
-                                    .map((d) => d.attributes.name)
-                                    .includes(filter.name)
-                            );
-                        } else {
-                            return acc || data.attributes.name === filter.name;
-                        }
-                    }, false),
-            false,
+            (keyAcc, [key, filters]) => {
+                const activeFilters = filters.filter((f) => f.active);
+                return (
+                    keyAcc && // AND between keys ie. Type==Base && Aspect==Command
+                    (!activeFilters.length || // no selection = all cards
+                        activeFilters.reduce<boolean>((filterAcc, filter) => {
+                            const data = (card.attributes[filter.key] as any)
+                                .data;
+                            if (Array.isArray(data)) {
+                                return (
+                                    filterAcc ||
+                                    data
+                                        .map((d) => d.attributes.name)
+                                        .includes(filter.name)
+                                );
+                            } else {
+                                return (
+                                    filterAcc ||
+                                    data.attributes.name === filter.name
+                                );
+                            }
+                        }, false))
+                );
+            },
+            true,
         ),
     );
 }
