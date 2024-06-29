@@ -1,6 +1,7 @@
-import { Card } from "@/types/card/Card";
+import { sortByAspectRarityCostId } from "@/app/sort";
 import { Expansion } from "@/types/card/attributes/Expansion";
 import { Type } from "@/types/card/attributes/Type";
+import { Card } from "@/types/card/Card";
 import { SWUDBCardEntry, SWUDBDeck } from "@/types/swudb/SWUDBDeck";
 
 export function swuCardToSWUDBCardEntry(card: Card) {
@@ -31,33 +32,33 @@ export function swuCardToSWUDBCardEntry(card: Card) {
 }
 
 export function swuCardsToSWUDBDeck(cards: Card[]) {
-    const cardsGroupedById: Record<string, number> = {};
-    for (const card of cards) {
+    const cardCounts: Record<string, number> = {};
+    for (const card of cards.filter(
+        (card) =>
+            ![Type.BASE, Type.LEADER].includes(
+                card.attributes.type.data.attributes.name,
+            ),
+    )) {
         const { id } = swuCardToSWUDBCardEntry(card);
-        cardsGroupedById[id] ??= 0;
-        cardsGroupedById[id]++;
+        cardCounts[id] ??= 0;
+        cardCounts[id]++;
     }
 
-    const cardEntries = Object.entries(cardsGroupedById).map<SWUDBCardEntry>(
+    const cardEntries = Object.entries(cardCounts).map<SWUDBCardEntry>(
         ([id, count]) => ({ id, count: Math.min(count, 3) }),
     );
 
-    const decklist: SWUDBDeck = {
-        metadata: {
-            name: "Sealed 12345",
-            author: "myself",
-        },
+    const decklist: Partial<SWUDBDeck> = {
         leader: swuCardToSWUDBCardEntry(
-            cards.filter(
-                (card) =>
-                    card.attributes.type.data.attributes.name === Type.LEADER,
+            cards.filter((card) =>
+                [Type.LEADER].includes(
+                    card.attributes.type.data.attributes.name,
+                ),
             )[0],
         ),
-        secondleader: null,
         base: swuCardToSWUDBCardEntry(
-            cards.filter(
-                (card) =>
-                    card.attributes.type.data.attributes.name === Type.BASE,
+            cards.filter((card) =>
+                [Type.BASE].includes(card.attributes.type.data.attributes.name),
             )[0],
         ),
         deck: [],

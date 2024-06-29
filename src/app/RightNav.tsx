@@ -100,7 +100,7 @@ const RightNav: React.FC<NavProps> = ({ open, setOpen, cards }) => {
                                 <ListItemIcon>
                                     <CopyAll />
                                 </ListItemIcon>
-                                <ListItemText primary="Export to swudb" />
+                                <ListItemText primary="Copy .json for SWUDB" />
                             </ListItemButton>
                         </ListItem>
                     </List>
