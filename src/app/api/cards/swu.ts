@@ -18,10 +18,7 @@ export async function getCardsPage({
         "pagination[page]": String(page),
         "pagination[pageSize]": "15",
     });
-    const response = await(
-        await fetch(url + "?" + params),
-    ).json() as Promise<CardsResponse>;
-    return response;
+    return (await fetch(url + "?" + params)).json();
 }
 
 export async function getAllCards(): Promise<Card[]> {
