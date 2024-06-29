@@ -42,7 +42,7 @@ const LeftNav: React.FC<NavProps> = ({ open, setOpen }) => (
                 justifyContent="space-between"
                 alignItems="center"
             >
-                <Typography>Filters</Typography>
+                <Typography>Menu</Typography>
                 <IconButton onClick={() => setOpen(false)}>
                     <ChevronLeft />
                 </IconButton>

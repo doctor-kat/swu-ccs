@@ -7,16 +7,19 @@ import { groupBy } from "@/app/GroupBy/util";
 import RightNav from "@/app/RightNav";
 import theme from "@/app/theme";
 import type { Card, CardAttributes } from "@/types/card/Card";
-import { ExpandCircleDown } from "@mui/icons-material";
+import { ExpandCircleDown, MenuOpen } from "@mui/icons-material";
 import {
     Accordion,
     AccordionDetails,
     AccordionSummary,
+    AppBar,
     Box,
     Grid,
+    IconButton,
     Paper,
     Stack,
     Toolbar,
+    Typography,
 } from "@mui/material";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
@@ -54,6 +57,31 @@ export default function Home() {
             value={{ filterGroup, setFilterGroup, grouping, setGrouping }}
         >
             <Box sx={{ display: "flex" }}>
+                <AppBar position="fixed">
+                    <Toolbar
+                        component={Stack}
+                        flexDirection="row"
+                        justifyContent="space-between"
+                    >
+                        <IconButton
+                            color="inherit"
+                            edge="end"
+                            onClick={() => setLeftDrawerOpen(!leftDrawerOpen)}
+                        >
+                            <MenuOpen />
+                        </IconButton>
+                        <Typography variant="h6" noWrap component="div">
+                            SWU Cardboard Crack Simulator
+                        </Typography>
+                        <IconButton
+                            color="inherit"
+                            edge="end"
+                            onClick={() => setRightDrawerOpen(!rightDrawerOpen)}
+                        >
+                            <MenuOpen />
+                        </IconButton>
+                    </Toolbar>
+                </AppBar>
                 <LeftNav
                     {...{ open: leftDrawerOpen, setOpen: setLeftDrawerOpen }}
                 />
@@ -145,8 +173,8 @@ export default function Home() {
                 </Box>
                 <RightNav
                     {...{
-                        open: leftDrawerOpen,
-                        setOpen: setLeftDrawerOpen,
+                        open: rightDrawerOpen,
+                        setOpen: setRightDrawerOpen,
                         cards: booster,
                     }}
                 />
