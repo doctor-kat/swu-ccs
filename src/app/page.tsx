@@ -123,7 +123,7 @@ export default function Home() {
                                         {key}
                                     </AccordionSummary>
                                     <AccordionDetails>
-                                        <Grid container>
+                                        <Grid container gap={1}>
                                             {cards.map((card, i) => (
                                                 <Grid
                                                     item
