@@ -1,4 +1,4 @@
-import { Rarity } from "@/types/card/attributes/Rarity";
+import { RARITY_ORDER } from "@/types/card/attributes/Rarity";
 import { Card } from "@/types/card/Card";
 
 export function sortByAspectRarityCost(a: Card, b: Card): number {
@@ -16,16 +16,9 @@ export function sortByAspectRarityCost(a: Card, b: Card): number {
             const [costA, costB] = [a, b].map((card) => card.attributes.cost);
             return costA - costB;
         } else {
-            const rarityOrder = [
-                Rarity.LEGENDARY,
-                Rarity.RARE,
-                Rarity.UNCOMMON,
-                Rarity.COMMON,
-                Rarity.SPECIAL,
-            ];
             return (
-                rarityOrder.findIndex((r) => r === rarityA) -
-                rarityOrder.findIndex((r) => r === rarityB)
+                RARITY_ORDER.findIndex((r) => r === rarityA) -
+                RARITY_ORDER.findIndex((r) => r === rarityB)
             );
         }
     } else {

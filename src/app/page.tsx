@@ -1,12 +1,23 @@
 "use client";
 
-import FilterContext, { generateFilters } from "@/app/context/FilterContext";
+import GlobalContext, { generateFilters } from "@/app/context/GlobalContext";
 import Filters, { applyFilterGroup } from "@/app/Filters";
+import GroupBy from "@/app/GroupBy";
+import { groupBy } from "@/app/GroupBy/util";
 import RightNav from "@/app/RightNav";
-import { sortByAspectRarityCost } from "@/app/sort";
 import theme from "@/app/theme";
-import type { Card } from "@/types/card/Card";
-import { Box, Grid, Paper, Stack, Toolbar } from "@mui/material";
+import type { Card, CardAttributes } from "@/types/card/Card";
+import { ExpandCircleDown } from "@mui/icons-material";
+import {
+    Accordion,
+    AccordionDetails,
+    AccordionSummary,
+    Box,
+    Grid,
+    Paper,
+    Stack,
+    Toolbar,
+} from "@mui/material";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import LeftNav from "./LeftNav";
@@ -16,6 +27,7 @@ export default function Home() {
     const [leftDrawerOpen, setLeftDrawerOpen] = useState(false);
     const [rightDrawerOpen, setRightDrawerOpen] = useState(false);
     const [filterGroup, setFilterGroup] = useState(generateFilters());
+    const [grouping, setGrouping] = useState<keyof CardAttributes>("aspects");
 
     useEffect(() => {
         fetch(`/api/booster?count=6`, {
@@ -31,12 +43,16 @@ export default function Home() {
         return "Loading...";
     }
 
-    const cards = applyFilterGroup({ filterGroup, cards: booster }).sort(
-        sortByAspectRarityCost,
-    );
+    const filteredCards = applyFilterGroup({
+        filterGroup,
+        cards: booster,
+    });
+    const group = groupBy(filteredCards, grouping);
     const drawerWidth = 240;
     return (
-        <FilterContext.Provider value={{ filterGroup, setFilterGroup }}>
+        <GlobalContext.Provider
+            value={{ filterGroup, setFilterGroup, grouping, setGrouping }}
+        >
             <Box sx={{ display: "flex" }}>
                 <LeftNav
                     {...{ open: leftDrawerOpen, setOpen: setLeftDrawerOpen }}
@@ -68,41 +84,69 @@ export default function Home() {
                 >
                     <Toolbar />
                     <Stack gap={2}>
+                        <GroupBy cards={booster} />
                         <Filters cards={booster} />
-                        <Grid container className="cards" gap={1}>
-                            {cards.map((card, i) => (
-                                <Grid
-                                    item
-                                    key={i}
-                                    sx={{
-                                        width: card.attributes.artFront.data
-                                            .attributes.formats.card.width,
-                                    }}
-                                >
-                                    <Image
-                                        src={
-                                            card.attributes.artFront.data
-                                                .attributes.formats.card.url
-                                        }
-                                        alt={card.attributes.title}
-                                        width={
-                                            card.attributes.artFront.data
-                                                .attributes.formats.card.width
-                                        }
-                                        height={
-                                            card.attributes.artFront.data
-                                                .attributes.formats.card.height
-                                        }
-                                    />
-                                </Grid>
+                        <Stack className="cards" gap={1}>
+                            {Object.entries(group).map(([key, cards]) => (
+                                <Accordion key={key}>
+                                    <AccordionSummary
+                                        expandIcon={<ExpandCircleDown />}
+                                    >
+                                        {key}
+                                    </AccordionSummary>
+                                    <AccordionDetails>
+                                        <Grid container>
+                                            {cards.map((card, i) => (
+                                                <Grid
+                                                    item
+                                                    key={i}
+                                                    sx={{
+                                                        width: card.attributes
+                                                            .artFront.data
+                                                            .attributes.formats
+                                                            .card.width,
+                                                    }}
+                                                >
+                                                    <Image
+                                                        src={
+                                                            card.attributes
+                                                                .artFront.data
+                                                                .attributes
+                                                                .formats.card
+                                                                .url
+                                                        }
+                                                        alt={
+                                                            card.attributes
+                                                                .title
+                                                        }
+                                                        width={
+                                                            card.attributes
+                                                                .artFront.data
+                                                                .attributes
+                                                                .formats.card
+                                                                .width
+                                                        }
+                                                        height={
+                                                            card.attributes
+                                                                .artFront.data
+                                                                .attributes
+                                                                .formats.card
+                                                                .height
+                                                        }
+                                                    />
+                                                </Grid>
+                                            ))}
+                                        </Grid>
+                                    </AccordionDetails>
+                                </Accordion>
                             ))}
-                        </Grid>
+                        </Stack>
                     </Stack>
                 </Box>
                 <RightNav
                     {...{ open: leftDrawerOpen, setOpen: setLeftDrawerOpen }}
                 />
             </Box>
-        </FilterContext.Provider>
+        </GlobalContext.Provider>
     );
 }

@@ -20,11 +20,15 @@ export function generateFilters(cards?: Card[]): FilterGroup {
     );
 }
 
-const FilterContext = createContext<{
+const GlobalContext = createContext<{
     filterGroup: FilterGroup;
     setFilterGroup: Dispatch<SetStateAction<FilterGroup>>;
+    grouping: keyof CardAttributes;
+    setGrouping: Dispatch<SetStateAction<keyof CardAttributes>>;
 }>({
     filterGroup: generateFilters(),
     setFilterGroup: () => {},
+    grouping: "aspects",
+    setGrouping: () => {},
 });
-export default FilterContext;
+export default GlobalContext;

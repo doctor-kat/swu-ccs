@@ -17,3 +17,11 @@ export enum Rarity {
     LEGENDARY = "Legendary",
     SPECIAL = "Special",
 }
+
+export const RARITY_ORDER = [
+    Rarity.LEGENDARY,
+    Rarity.RARE,
+    Rarity.UNCOMMON,
+    Rarity.COMMON,
+    Rarity.SPECIAL,
+];

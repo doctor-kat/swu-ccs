@@ -1,4 +1,4 @@
-import FilterContext, { generateFilters } from "@/app/context/FilterContext";
+import GlobalContext, { generateFilters } from "@/app/context/GlobalContext";
 import { applyFilterGroup, getDistinctValues } from "@/app/Filters/util";
 import { Card, CardAttributes } from "@/types/card/Card";
 import {
@@ -31,7 +31,7 @@ type FiltersProps = {
 };
 
 const Filters: React.FC<FiltersProps> = ({ cards }) => {
-    const { filterGroup, setFilterGroup } = useContext(FilterContext);
+    const { filterGroup, setFilterGroup } = useContext(GlobalContext);
 
     useEffect(() => {
         setFilterGroup(generateFilters(cards));
