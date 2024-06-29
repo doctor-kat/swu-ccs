@@ -43,7 +43,7 @@ const GroupBy: React.FC<FiltersProps> = ({ cards }) => {
                             const {
                                 target: { value },
                             } = event;
-                            setGrouping(value);
+                            setGrouping(value as keyof CardAttributes);
                         }}
                     >
                         {Object.entries(FILTER_KEYS).map(([label, key]) => (
