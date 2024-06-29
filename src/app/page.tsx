@@ -84,7 +84,7 @@ export default function Home() {
                 >
                     <Toolbar />
                     <Stack gap={2}>
-                        <GroupBy cards={booster} />
+                        <GroupBy />
                         <Filters cards={booster} />
                         <Stack className="cards" gap={1}>
                             {Object.entries(group).map(([key, cards]) => (
@@ -144,7 +144,11 @@ export default function Home() {
                     </Stack>
                 </Box>
                 <RightNav
-                    {...{ open: leftDrawerOpen, setOpen: setLeftDrawerOpen }}
+                    {...{
+                        open: leftDrawerOpen,
+                        setOpen: setLeftDrawerOpen,
+                        cards: booster,
+                    }}
                 />
             </Box>
         </GlobalContext.Provider>
