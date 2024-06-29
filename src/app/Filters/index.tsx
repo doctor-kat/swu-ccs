@@ -1,5 +1,9 @@
 import GlobalContext, { generateFilters } from "@/app/context/GlobalContext";
-import { applyFilterGroup, getDistinctValues } from "@/app/Filters/util";
+import {
+    applyFilterGroup,
+    getDistinctValues,
+    updateCounts,
+} from "@/app/Filters/util";
 import { Card, CardAttributes } from "@/types/card/Card";
 import {
     Checkbox,
@@ -64,6 +68,14 @@ const Filters: React.FC<FiltersProps> = ({ cards }) => {
                                         ),
                                     })),
                                 };
+                                const filteredCards = applyFilterGroup({
+                                    cards,
+                                    filterGroup: next,
+                                });
+                                updateCounts({
+                                    filterGroup: next,
+                                    cards: filteredCards,
+                                });
                                 setFilterGroup(next);
                             }}
                             renderValue={(selected) => (

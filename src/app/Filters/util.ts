@@ -27,6 +27,29 @@ export function getDistinctValues(
         .sort((a, b) => (a.name > b.name ? 1 : -1));
 }
 
+export function updateCounts({
+    filterGroup,
+    cards,
+}: {
+    filterGroup: FilterGroup;
+    cards: Card[];
+}): void {
+    Object.entries(filterGroup).forEach(([, filters]) => {
+        for (const filter of filters) {
+            filter.count = cards.filter((card) => {
+                const data = (card.attributes[filter.key] as any).data;
+                if (Array.isArray(data)) {
+                    return data?.some(
+                        (d: any) => filter.name === d.attributes.name,
+                    );
+                } else {
+                    return filter.name === data.attributes.name;
+                }
+            }).length;
+        }
+    });
+}
+
 export function applyFilterGroup({
     filterGroup,
     cards,
@@ -55,11 +78,11 @@ export function applyFilterGroup({
                             if (Array.isArray(data)) {
                                 return (
                                     filterAcc ||
-                                    data
-                                        .map((d) => d.attributes.name)
-                                        .includes(filter.name)
+                                    data.some((d) =>
+                                        d.attributes.name.includes(filter.name),
+                                    )
                                 );
-                            } else {
+                           } else {
                                 return (
                                     filterAcc ||
                                     data.attributes.name === filter.name
