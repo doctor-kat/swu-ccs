@@ -42,6 +42,17 @@ const theme = createTheme({
             main: "#6c99bb",
         },
     },
+    components: {
+        MuiAccordionSummary: {
+            styleOverrides: {
+                root: {
+                    position: "sticky",
+                    top: 63,
+                    background: "#2e2e2e",
+                },
+            },
+        },
+    },
 });
 
 export default theme;

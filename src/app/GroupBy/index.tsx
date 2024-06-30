@@ -1,6 +1,7 @@
 import GlobalContext, { FILTER_KEYS } from "@/app/context/GlobalContext";
 import { applyFilterGroup, getDistinctValues } from "@/app/Filters/util";
 import { CardAttributes } from "@/types/card/Card";
+import { PivotTableChart } from "@mui/icons-material";
 import {
     FormControl,
     Grid,
@@ -21,9 +22,11 @@ const GroupBy = () => {
         <Grid container className="filters" gap={1}>
             <Grid item xs>
                 <FormControl fullWidth>
-                    <InputLabel>Group by</InputLabel>
+                    <InputLabel>
+                        <PivotTableChart /> Group by
+                    </InputLabel>
                     <Select
-                        color="primary"
+                        color="secondary"
                         variant="outlined"
                         value={grouping}
                         input={<OutlinedInput label="Tag" />}

@@ -103,11 +103,26 @@ export default function Home() {
                 >
                     <Toolbar />
                     <Stack gap={2}>
-                        <GroupBy />
-                        <Filters cards={booster} />
+                        <Grid container alignItems="flex-start" gap={1}>
+                            <Grid item flexGrow={1}>
+                                <Filters cards={booster} />
+                            </Grid>
+                            <Grid item sx={{ minWidth: 100 }}>
+                                <GroupBy />
+                            </Grid>
+                        </Grid>
                         <Stack className="cards" gap={1}>
                             {Object.entries(group).map(([key, cards]) => (
-                                <Accordion key={key}>
+                                <Accordion
+                                    key={key}
+                                    sx={{
+                                        "& .MuiAccordionSummary-root.Mui-expanded":
+                                            {
+                                                boxShadow: 1,
+                                            },
+                                    }}
+                                    defaultExpanded
+                                >
                                     <AccordionSummary
                                         expandIcon={<ExpandCircleDown />}
                                     >

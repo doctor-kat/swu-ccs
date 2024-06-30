@@ -5,6 +5,7 @@ import {
     updateCounts,
 } from "@/app/Filters/util";
 import { Card, CardAttributes } from "@/types/card/Card";
+import { FilterAlt } from "@mui/icons-material";
 import {
     Checkbox,
     Chip,
@@ -46,7 +47,9 @@ const Filters: React.FC<FiltersProps> = ({ cards }) => {
             {Object.entries(filterGroup).map(([label, filters]) => (
                 <Grid item xs key={label}>
                     <FormControl fullWidth>
-                        <InputLabel>{label}</InputLabel>
+                        <InputLabel>
+                            <FilterAlt /> {label}
+                        </InputLabel>
                         <Select
                             color="primary"
                             variant="outlined"
