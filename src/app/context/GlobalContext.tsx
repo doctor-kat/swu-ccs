@@ -28,7 +28,7 @@ const GlobalContext = createContext<{
 }>({
     filterGroup: generateFilters(),
     setFilterGroup: () => {},
-    grouping: "aspects",
+    grouping: "type",
     setGrouping: () => {},
 });
 export default GlobalContext;
