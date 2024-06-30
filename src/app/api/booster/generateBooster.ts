@@ -1,7 +1,7 @@
-import { Card } from "@/types/card/Card";
 import { Expansion } from "@/types/card/attributes/Expansion";
 import { Rarity } from "@/types/card/attributes/Rarity";
 import { Type } from "@/types/card/attributes/Type";
+import { Card } from "@/types/card/Card";
 import { getRandomFromList } from "./util";
 
 export async function generateBooster({
@@ -32,11 +32,9 @@ export async function generateBooster({
         switch (type) {
             case Type.LEADER:
             case Type.BASE:
-                if (![Rarity.RARE, Rarity.SPECIAL].includes(rarity)) {
-                    group[type] ??= [];
-                    group[type].push(card);
-                    break;
-                }
+                group[type] ??= [];
+                group[type].push(card);
+                break;
 
             default:
                 group[rarity] ??= [];
@@ -49,16 +47,27 @@ export async function generateBooster({
         .flatMap(() => {
             const boosterPack = [];
 
-            // Leader
-            boosterPack.push(getRandomFromList(group[Type.LEADER]));
-
-            // Common Base
-            const commonBases = group[Type.BASE].filter(
-                (card) =>
-                    card.attributes.rarity.data.attributes.name ===
-                    Rarity.COMMON,
-            );
-            boosterPack.push(getRandomFromList(commonBases));
+            // Leader and Base
+            [Type.LEADER, Type.BASE].forEach((type) => {
+                const commons = group[type].filter(
+                    (card) =>
+                        card.attributes.rarity.data.attributes.name ===
+                        Rarity.COMMON,
+                );
+                const rares = group[type].filter(
+                    (card) =>
+                        card.attributes.rarity.data.attributes.name ===
+                        Rarity.RARE,
+                );
+                boosterPack.push(
+                    getRandomFromList([
+                        ...Array(7)
+                            .fill(commons)
+                            .flatMap((cards) => cards),
+                        ...rares,
+                    ]),
+                );
+            });
 
             // 9 Commons
             Array(9)
@@ -76,27 +85,11 @@ export async function generateBooster({
 
             // 1 Rare or Legendary
             {
-                const rareBases = group[Rarity.RARE].filter(
-                    (card) =>
-                        card.attributes.rarity.data.attributes.name ===
-                        Rarity.RARE,
-                );
-
                 const rarity = getRandomFromList([
                     ...Array(7).fill(Rarity.RARE),
                     Rarity.LEGENDARY,
                 ]);
-                switch (rarity) {
-                    case Rarity.RARE:
-                        boosterPack.push(
-                            getRandomFromList([...group[rarity], ...rareBases]),
-                        );
-                        break;
-
-                    case Rarity.LEGENDARY:
-                        boosterPack.push(getRandomFromList(group[rarity]));
-                        break;
-                }
+                boosterPack.push(getRandomFromList(group[rarity]));
             }
 
             // Foil
@@ -107,59 +100,7 @@ export async function generateBooster({
                     ...Array(7).fill(Rarity.RARE),
                     Rarity.LEGENDARY,
                 ]);
-                switch (rarity) {
-                    case Rarity.COMMON:
-                        const commons = group[Rarity.COMMON];
-                        const commonBases = group[Type.BASE].filter(
-                            (card) =>
-                                card.attributes.rarity.data.attributes.name ===
-                                Rarity.COMMON,
-                        );
-                        const commonLeaders = group[Type.LEADER].filter(
-                            (card) =>
-                                card.attributes.rarity.data.attributes.name ===
-                                Rarity.COMMON,
-                        );
-                        boosterPack.push(
-                            getRandomFromList([
-                                ...commons,
-                                ...commonBases,
-                                ...commonLeaders,
-                            ]),
-                        );
-                        break;
-
-                    case Rarity.UNCOMMON:
-                        const uncommons = [...group[Rarity.UNCOMMON]];
-                        boosterPack.push(getRandomFromList(uncommons));
-                        break;
-
-                    case Rarity.RARE:
-                        const rares = [...group[Rarity.RARE]];
-                        const rareBases = group[Type.BASE].filter(
-                            (card) =>
-                                card.attributes.rarity.data.attributes.name ===
-                                Rarity.RARE,
-                        );
-                        const rareLeaders = group[Type.LEADER].filter(
-                            (card) =>
-                                card.attributes.rarity.data.attributes.name ===
-                                Rarity.RARE,
-                        );
-                        boosterPack.push(
-                            getRandomFromList([
-                                ...rares,
-                                ...rareBases,
-                                ...rareLeaders,
-                            ]),
-                        );
-                        break;
-
-                    case Rarity.LEGENDARY:
-                        const legendaries = [...group[Rarity.LEGENDARY]];
-                        boosterPack.push(getRandomFromList(legendaries));
-                        break;
-                }
+                boosterPack.push(getRandomFromList(group[rarity]));
             }
             return boosterPack;
         });
