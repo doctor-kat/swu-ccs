@@ -2,9 +2,9 @@
 
 import GlobalContext, { generateFilters } from "@/app/context/GlobalContext";
 import Filters, { applyFilterGroup } from "@/app/Filters";
+import GalacticRepublic from "@/app/GalacticRepublic";
 import GroupBy from "@/app/GroupBy";
 import { groupBy } from "@/app/GroupBy/util";
-import RightNav from "@/app/RightNav";
 import theme from "@/app/theme";
 import type { Card, CardAttributes } from "@/types/card/Card";
 import { ExpandCircleDown, MenuOpen } from "@mui/icons-material";
@@ -28,7 +28,6 @@ import LeftNav from "./LeftNav";
 export default function Home() {
     const [booster, setBooster] = useState<Card[]>([]);
     const [leftDrawerOpen, setLeftDrawerOpen] = useState(false);
-    const [rightDrawerOpen, setRightDrawerOpen] = useState(false);
     const [filterGroup, setFilterGroup] = useState(generateFilters());
     const [grouping, setGrouping] = useState<keyof CardAttributes>("aspects");
 
@@ -58,32 +57,33 @@ export default function Home() {
         >
             <Box sx={{ display: "flex" }}>
                 <AppBar position="fixed">
-                    <Toolbar
-                        component={Stack}
-                        flexDirection="row"
-                        justifyContent="space-between"
-                    >
+                    <Toolbar>
                         <IconButton
                             color="inherit"
                             edge="end"
                             onClick={() => setLeftDrawerOpen(!leftDrawerOpen)}
+                            sx={{ mr: 1 }}
                         >
                             <MenuOpen />
                         </IconButton>
-                        <Typography variant="h6" noWrap component="div">
-                            SWU Cardboard Crack Simulator
-                        </Typography>
-                        <IconButton
-                            color="inherit"
-                            edge="end"
-                            onClick={() => setRightDrawerOpen(!rightDrawerOpen)}
+                        <Stack
+                            flexDirection="row"
+                            alignItems="center"
+                            gap={0.5}
                         >
-                            <MenuOpen />
-                        </IconButton>
+                            <GalacticRepublic />
+                            <Typography variant="h6" flexGrow={1}>
+                                SWU Cardboard Crack Simulator
+                            </Typography>
+                        </Stack>
                     </Toolbar>
                 </AppBar>
                 <LeftNav
-                    {...{ open: leftDrawerOpen, setOpen: setLeftDrawerOpen }}
+                    {...{
+                        open: leftDrawerOpen,
+                        setOpen: setLeftDrawerOpen,
+                        cards: booster,
+                    }}
                 />
                 <Box
                     component={Paper}
@@ -97,16 +97,7 @@ export default function Home() {
                                 duration:
                                     theme.transitions.duration.enteringScreen,
                             }),
-                            marginLef: 0,
-                        }),
-                        marginRight: `-${drawerWidth}px`,
-                        ...(rightDrawerOpen && {
-                            transition: theme.transitions.create("margin", {
-                                easing: theme.transitions.easing.easeOut,
-                                duration:
-                                    theme.transitions.duration.enteringScreen,
-                            }),
-                            marginRight: 0,
+                            marginLeft: 0,
                         }),
                     }}
                 >
@@ -171,13 +162,6 @@ export default function Home() {
                         </Stack>
                     </Stack>
                 </Box>
-                <RightNav
-                    {...{
-                        open: rightDrawerOpen,
-                        setOpen: setRightDrawerOpen,
-                        cards: booster,
-                    }}
-                />
             </Box>
         </GlobalContext.Provider>
     );
