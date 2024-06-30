@@ -9,6 +9,7 @@ export const FILTER_KEYS: Record<string, keyof CardAttributes> = {
     Rarity: "rarity",
     Keywords: "keywords",
     Traits: "traits",
+    Cost: "cost",
 };
 
 export function generateFilters(cards?: Card[]): FilterGroup {

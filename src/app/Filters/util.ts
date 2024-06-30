@@ -6,8 +6,10 @@ export function getDistinctValues(
     key: keyof CardAttributes,
 ): FilterItem[] {
     const matches: string[] = cards.flatMap((card) => {
-        const data = (card.attributes[key] as any).data;
-        if (Array.isArray(data)) {
+        const data = (card.attributes[key] as any)?.data;
+        if (!data) {
+            return card.attributes[key] ?? "None";
+        } else if (Array.isArray(data)) {
             return data.flatMap((d: any) => d.attributes.name);
         } else {
             return data.attributes.name;
@@ -37,8 +39,12 @@ export function updateCounts({
     Object.entries(filterGroup).forEach(([, filters]) => {
         for (const filter of filters) {
             filter.count = cards.filter((card) => {
-                const data = (card.attributes[filter.key] as any).data;
-                if (Array.isArray(data)) {
+                const data = (card.attributes[filter.key] as any)?.data;
+                if (!data) {
+                    return (
+                        filter.name == (card.attributes[filter.key] ?? "None")
+                    );
+                } else if (Array.isArray(data)) {
                     return data?.some(
                         (d: any) => filter.name === d.attributes.name,
                     );
@@ -74,15 +80,21 @@ export function applyFilterGroup({
                     (!activeFilters.length || // no selection = all cards
                         activeFilters.reduce<boolean>((filterAcc, filter) => {
                             const data = (card.attributes[filter.key] as any)
-                                .data;
-                            if (Array.isArray(data)) {
+                                ?.data;
+                            if (!data) {
+                                return (
+                                    filterAcc ||
+                                    (card.attributes[filter.key] ?? "None") ==
+                                        filter.name
+                                );
+                            } else if (Array.isArray(data)) {
                                 return (
                                     filterAcc ||
                                     data.some((d) =>
                                         d.attributes.name.includes(filter.name),
                                     )
                                 );
-                           } else {
+                            } else {
                                 return (
                                     filterAcc ||
                                     data.attributes.name === filter.name

@@ -9,7 +9,7 @@ export function groupBy(
 ): Record<string, Card[]> {
     const groups: Record<string, Card[]> = {};
     for (const card of cards) {
-        const data = (card.attributes[key] as any).data;
+        const data = (card.attributes[key] as any)?.data;
         switch (key) {
             case "aspects":
                 const aspects: Aspect[] = data.flatMap(
@@ -37,7 +37,11 @@ export function groupBy(
                 });
             // intentionally fall through to default
             default:
-                if (Array.isArray(data)) {
+                if (!data) {
+                    const value = String(card.attributes[key] ?? "None");
+                    groups[value] ??= [];
+                    groups[value].push(card);
+                } else if (Array.isArray(data)) {
                     // TODO: handle multiple values
                     const value = data.length
                         ? data[0].attributes.name
