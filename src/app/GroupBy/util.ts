@@ -1,4 +1,4 @@
-import { sortByAspectRarityCostId } from "@/app/sort";
+import { sortByTypeAspectRarityCostId } from "@/app/sort";
 import { Aspect } from "@/types/card/attributes/Aspect";
 import { RARITY_ORDER } from "@/types/card/attributes/Rarity";
 import { Card, CardAttributes } from "@/types/card/Card";
@@ -56,7 +56,7 @@ export function groupBy(
             delete groups[group];
             continue;
         }
-        groups[group].sort(sortByAspectRarityCostId);
+        groups[group].sort(sortByTypeAspectRarityCostId);
     }
     return groups;
 }
