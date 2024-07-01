@@ -1,25 +1,19 @@
 import { swuCardsToSWUDBDeck } from "@/app/api/booster/swudb";
 import { Card } from "@/types/card/Card";
-import {
-    ChevronLeft,
-    CopyAll,
-    OpenInBrowser,
-    OpenInNew,
-} from "@mui/icons-material";
+import { CopyAll, OpenInBrowser } from "@mui/icons-material";
 import {
     Box,
     Divider,
     Drawer,
-    IconButton,
     List,
     ListItem,
     ListItemButton,
     ListItemIcon,
     ListItemText,
     Snackbar,
-    Stack,
     Toolbar,
 } from "@mui/material";
+import Image from "next/image";
 import React, { Dispatch, SetStateAction, useState } from "react";
 
 type NavProps = {
@@ -27,35 +21,30 @@ type NavProps = {
     setOpen: Dispatch<SetStateAction<boolean>>;
     cards: Card[];
 };
+export const DRAWER_WIDTH_CLOSED = 84;
+export const DRAWER_WIDTH_OPEN = 240;
 const LeftNav: React.FC<NavProps> = ({ open, setOpen, cards }) => {
     const [snackbarOpen, setSnackbarOpen] = useState(false);
 
     return (
         <Drawer
-            variant="persistent"
+            variant="permanent"
             open={open}
             sx={{
-                width: 240,
+                width: open ? DRAWER_WIDTH_OPEN : DRAWER_WIDTH_CLOSED,
                 flexShrink: 0,
-                [`& .MuiDrawer-paper`]: {
-                    width: 240,
+            }}
+            PaperProps={{
+                elevation: 12,
+                sx: {
+                    width: open ? DRAWER_WIDTH_OPEN : DRAWER_WIDTH_CLOSED,
                     boxSizing: "border-box",
+                    overflow: "hidden",
                 },
             }}
         >
-            <Toolbar>
-                <Stack
-                    width="100%"
-                    flexDirection="row"
-                    justifyContent="space-between"
-                    alignItems="center"
-                >
-                    <IconButton onClick={() => setOpen(false)}>
-                        <ChevronLeft />
-                    </IconButton>
-                </Stack>
-            </Toolbar>
-            <Box sx={{ overflow: "auto" }}>
+            <Toolbar />
+            <Box sx={{ overflow: open ? "auto" : "hidden" }}>
                 <List>
                     <ListItem>
                         <a href="/">
@@ -63,7 +52,9 @@ const LeftNav: React.FC<NavProps> = ({ open, setOpen, cards }) => {
                                 <ListItemIcon>
                                     <OpenInBrowser />
                                 </ListItemIcon>
-                                <ListItemText primary="Open SHD Prerelease Kit" />
+                                {open && (
+                                    <ListItemText primary="Open SHD Prerelease Kit" />
+                                )}
                             </ListItemButton>
                         </a>
                     </ListItem>
@@ -72,9 +63,14 @@ const LeftNav: React.FC<NavProps> = ({ open, setOpen, cards }) => {
                         <ListItem>
                             <ListItemButton>
                                 <ListItemIcon>
-                                    <OpenInNew />
+                                    <Image
+                                        src="/swudb.png"
+                                        alt="swudb"
+                                        height={24}
+                                        width={24}
+                                    />
                                 </ListItemIcon>
-                                <ListItemText primary="swudb.com" />
+                                {open && <ListItemText primary="swudb.com" />}
                             </ListItemButton>
                         </ListItem>
                     </a>
@@ -93,7 +89,9 @@ const LeftNav: React.FC<NavProps> = ({ open, setOpen, cards }) => {
                             <ListItemIcon>
                                 <CopyAll />
                             </ListItemIcon>
-                            <ListItemText primary="Copy .json for SWUDB" />
+                            {open && (
+                                <ListItemText primary="Copy .json for SWUDB" />
+                            )}
                         </ListItemButton>
                     </ListItem>
                 </List>

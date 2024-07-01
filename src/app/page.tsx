@@ -27,7 +27,7 @@ import LeftNav from "./LeftNav";
 
 export default function Home() {
     const [booster, setBooster] = useState<Card[]>([]);
-    const [leftDrawerOpen, setLeftDrawerOpen] = useState(false);
+    const [leftDrawerOpen, setLeftDrawerOpen] = useState(true);
     const [filterGroup, setFilterGroup] = useState(generateFilters());
     const [grouping, setGrouping] = useState<keyof CardAttributes>("aspects");
 
@@ -50,21 +50,29 @@ export default function Home() {
         cards: booster,
     });
     const group = groupBy(filteredCards, grouping);
-    const drawerWidth = 240;
     return (
         <GlobalContext.Provider
             value={{ filterGroup, setFilterGroup, grouping, setGrouping }}
         >
             <Box sx={{ display: "flex" }}>
-                <AppBar position="fixed">
+                <AppBar
+                    position="fixed"
+                    sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                >
                     <Toolbar>
                         <IconButton
                             color="inherit"
                             edge="end"
                             onClick={() => setLeftDrawerOpen(!leftDrawerOpen)}
-                            sx={{ mr: 1 }}
+                            sx={{ mr: 2 }}
                         >
-                            <MenuOpen />
+                            <MenuOpen
+                                sx={{
+                                    transform: leftDrawerOpen
+                                        ? null
+                                        : "scaleX(-1)",
+                                }}
+                            />
                         </IconButton>
                         <Stack
                             flexDirection="row"
@@ -90,14 +98,12 @@ export default function Home() {
                     sx={{
                         flexGrow: 1,
                         p: 3,
-                        marginLeft: `-${drawerWidth}px`,
                         ...(leftDrawerOpen && {
                             transition: theme.transitions.create("margin", {
                                 easing: theme.transitions.easing.easeOut,
                                 duration:
                                     theme.transitions.duration.enteringScreen,
                             }),
-                            marginLeft: 0,
                         }),
                     }}
                 >
