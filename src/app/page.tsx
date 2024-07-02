@@ -1,11 +1,14 @@
 "use client";
 
+import { generateBooster } from "@/app/api/booster/generateBooster";
+import { getAllCards } from "@/app/api/cards/swu";
 import GlobalContext, { generateFilters } from "@/app/context/GlobalContext";
 import Filters, { applyFilterGroup } from "@/app/Filters";
 import GalacticRepublic from "@/app/GalacticRepublic";
 import GroupBy from "@/app/GroupBy";
 import { groupBy } from "@/app/GroupBy/util";
 import theme from "@/app/theme";
+import { Expansion } from "@/types/card/attributes/Expansion";
 import type { Card, CardAttributes } from "@/types/card/Card";
 import { ExpandCircleDown, MenuOpen } from "@mui/icons-material";
 import {
@@ -32,17 +35,19 @@ export default function Home() {
     const [grouping, setGrouping] = useState<keyof CardAttributes>("aspects");
 
     useEffect(() => {
-        fetch(`/api/booster?count=6`, {
-            cache: "no-store",
-        })
-            .then((res) => res.json())
-            .then((booster) => {
+        (async () => {
+            const booster = generateBooster({
+                expansion: Expansion.SHD,
+                count: 6,
+                cards: await getAllCards(),
+            }).then((booster) => {
                 setBooster(booster);
             });
+        })();
     }, []);
 
     if (!booster?.length) {
-        return "Loading...";
+        return "Loading...may take up to 1 minute on first load";
     }
 
     const filteredCards = applyFilterGroup({

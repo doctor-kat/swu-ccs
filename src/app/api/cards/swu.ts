@@ -1,3 +1,4 @@
+import { db } from "@/app/db";
 import { Expansion } from "@/types/card/attributes/Expansion";
 import { Card } from "@/types/card/Card";
 import { CardsResponse } from "@/types/CardsResponse";
@@ -22,6 +23,10 @@ export async function getCardsPage({
 }
 
 export async function getAllCards(): Promise<Card[]> {
+    if (await db.cards.count()) {
+        return db.cards.toArray();
+    }
+
     const page = await getCardsPage({});
     let cards = page.data;
 
@@ -30,5 +35,6 @@ export async function getAllCards(): Promise<Card[]> {
         cards = [...cards, ...(await nextPage).data];
     }
 
+    cards.forEach((card) => db.cards.add(card));
     return cards;
 }
