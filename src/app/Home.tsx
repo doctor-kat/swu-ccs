@@ -3,7 +3,7 @@
 import GlobalContext, { generateFilters } from "@/app/context/GlobalContext";
 import Filters, { applyFilterGroup } from "@/app/Filters";
 import GalacticRepublic from "@/app/GalacticRepublic";
-import GroupBy from "@/app/GroupBy";
+import GroupBy, { LOCALSTORAGE_GROUPBY_KEY } from "@/app/GroupBy";
 import { groupBy } from "@/app/GroupBy/util";
 import theme from "@/app/theme";
 import type { Card, CardAttributes } from "@/types/card/Card";
@@ -37,6 +37,13 @@ export default function Home() {
     const [grouping, setGrouping] = useState<keyof CardAttributes>("aspects");
 
     useEffect(() => {
+        const lastGrouping = localStorage.getItem(LOCALSTORAGE_GROUPBY_KEY);
+        if (lastGrouping) {
+            setGrouping(lastGrouping as keyof CardAttributes);
+        }
+    }, []);
+
+    useEffect(() => {
         fetch(
             `/api/booster?set=${set ?? "TWI"}&count=${count ? Number(count) : 6}`,
             {
@@ -56,7 +63,18 @@ export default function Home() {
     const group = groupBy(filteredCards, grouping);
     return (
         <GlobalContext.Provider
-            value={{ filterGroup, setFilterGroup, grouping, setGrouping }}
+            value={{
+                filterGroup,
+                setFilterGroup,
+                grouping,
+                setGrouping: (group) => {
+                    localStorage.setItem(
+                        LOCALSTORAGE_GROUPBY_KEY,
+                        group as string,
+                    );
+                    return setGrouping(group);
+                },
+            }}
         >
             <Box sx={{ display: "flex" }}>
                 <AppBar

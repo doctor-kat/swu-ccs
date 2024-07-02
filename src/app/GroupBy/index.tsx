@@ -1,3 +1,5 @@
+"use client";
+
 import GlobalContext, { FILTER_KEYS } from "@/app/context/GlobalContext";
 import { applyFilterGroup, getDistinctValues } from "@/app/Filters/util";
 import { CardAttributes } from "@/types/card/Card";
@@ -14,6 +16,7 @@ import {
 import React, { useContext } from "react";
 
 export { getDistinctValues, applyFilterGroup };
+export const LOCALSTORAGE_GROUPBY_KEY = "swu-ccs-groupBy";
 
 const GroupBy = () => {
     const { grouping, setGrouping } = useContext(GlobalContext);
@@ -34,6 +37,10 @@ const GroupBy = () => {
                             const {
                                 target: { value },
                             } = event;
+                            localStorage.setItem(
+                                LOCALSTORAGE_GROUPBY_KEY,
+                                value,
+                            );
                             setGrouping(value as keyof CardAttributes);
                         }}
                     >
