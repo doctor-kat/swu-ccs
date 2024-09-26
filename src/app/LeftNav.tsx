@@ -15,6 +15,7 @@ import {
 } from "@mui/material";
 import Image from "next/image";
 import React, { Dispatch, SetStateAction, useState } from "react";
+import nextConfig from "../../next.config.mjs";
 
 type NavProps = {
     open: boolean;
@@ -64,7 +65,7 @@ const LeftNav: React.FC<NavProps> = ({ open, setOpen, cards }) => {
                             <ListItemButton>
                                 <ListItemIcon>
                                     <Image
-                                        src={`${process.env.NEXT_PUBLIC_BASE_URL}/swudb.png`}
+                                        src={`${nextConfig.basePath}/swudb.png`}
                                         alt="swudb"
                                         height={24}
                                         width={24}
