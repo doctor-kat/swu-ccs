@@ -5,7 +5,7 @@ import { Card } from "@/types/card/Card";
 import { getRandomFromList } from "./util";
 
 export async function generateBooster({
-    expansion = Expansion.SHD,
+    expansion = Expansion.TWI,
     count = 1,
     cards,
 }: {

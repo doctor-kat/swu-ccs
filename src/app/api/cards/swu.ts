@@ -3,9 +3,15 @@ import { Expansion } from "@/types/card/attributes/Expansion";
 import { Card } from "@/types/card/Card";
 import { CardsResponse } from "@/types/CardsResponse";
 
+const expansionMap: Record<Expansion, string> = {
+    [Expansion.SOR]: "2",
+    [Expansion.SHD]: "8",
+    [Expansion.TWI]: "18",
+};
+
 export async function getCardsPage({
     locale = "en",
-    set = Expansion.SHD,
+    set = Expansion.TWI,
     page = 1,
 }): Promise<CardsResponse> {
     const url = `https://admin.starwarsunlimited.com/api/cards`;
