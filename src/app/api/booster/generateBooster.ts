@@ -1,15 +1,12 @@
-import { Expansion } from "@/types/card/attributes/Expansion";
 import { Rarity } from "@/types/card/attributes/Rarity";
 import { Type } from "@/types/card/attributes/Type";
 import { Card } from "@/types/card/Card";
 import { getRandomFromList } from "./util";
 
 export async function generateBooster({
-    expansion = Expansion.TWI,
     count = 1,
     cards,
 }: {
-    expansion?: Expansion;
     count?: string | number;
     cards: Card[];
 }) {

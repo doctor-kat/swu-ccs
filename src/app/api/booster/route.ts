@@ -6,10 +6,13 @@ import { cache } from "react";
 import { generateBooster } from "./generateBooster";
 
 export async function GET({ nextUrl: { searchParams } }: NextRequest) {
-    const allCards = cache(async () => await getAllCards());
+    const set = searchParams.get("set")
+        ? Expansion[searchParams.get("set") as keyof typeof Expansion]
+        : Expansion.TWI;
+    const count = searchParams.get("count") ?? 6;
+    const allCards = cache(async () => await getAllCards({ set }));
     const cards: Card[] = await generateBooster({
-        expansion: searchParams.get("expansion") as Expansion,
-        count: searchParams.get("count") ?? undefined,
+        count,
         cards: await allCards(),
     });
 

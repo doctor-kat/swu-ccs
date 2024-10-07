@@ -27,12 +27,16 @@ export async function getCardsPage({
     return (await fetch(url + "?" + params)).json();
 }
 
-export async function getAllCards(): Promise<Card[]> {
-    const page = await getCardsPage({});
+export async function getAllCards({
+    set,
+}: {
+    set?: Expansion;
+}): Promise<Card[]> {
+    const page = await getCardsPage({ set });
     let cards = page.data;
 
     for (let i = 1; i < page.meta.pagination.pageCount; i++) {
-        const nextPage = getCardsPage({ page: i });
+        const nextPage = getCardsPage({ set, page: i });
         cards = [...cards, ...(await nextPage).data];
     }
 

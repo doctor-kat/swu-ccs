@@ -46,18 +46,22 @@ const LeftNav: React.FC<NavProps> = ({ open, setOpen, cards }) => {
             <Toolbar />
             <Box sx={{ overflow: open ? "auto" : "hidden" }}>
                 <List>
-                    <ListItem>
-                        <a href="/">
-                            <ListItemButton>
-                                <ListItemIcon>
-                                    <OpenInBrowser />
-                                </ListItemIcon>
-                                {open && (
-                                    <ListItemText primary="Open TWI Prerelease Kit" />
-                                )}
-                            </ListItemButton>
-                        </a>
-                    </ListItem>
+                    {["SOR", "SHD", "TWI"].map((set) => (
+                        <ListItem key={set}>
+                            <a href={`/?set=${set}&count=6`}>
+                                <ListItemButton>
+                                    <ListItemIcon>
+                                        <OpenInBrowser />
+                                    </ListItemIcon>
+                                    {open && (
+                                        <ListItemText
+                                            primary={`Open ${set} Prerelease Kit`}
+                                        />
+                                    )}
+                                </ListItemButton>
+                            </a>
+                        </ListItem>
+                    ))}
                     <Divider />
                     <a href="https://www.swudb.com/decks" target="_blank">
                         <ListItem>
