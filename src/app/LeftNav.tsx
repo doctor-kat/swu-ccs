@@ -53,7 +53,7 @@ const LeftNav: React.FC<NavProps> = ({ open, setOpen, cards }) => {
                                     <OpenInBrowser />
                                 </ListItemIcon>
                                 {open && (
-                                    <ListItemText primary="Open SHD Prerelease Kit" />
+                                    <ListItemText primary="Open TWI Prerelease Kit" />
                                 )}
                             </ListItemButton>
                         </a>

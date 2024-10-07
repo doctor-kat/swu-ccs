@@ -13,4 +13,5 @@ interface ExpansionAttributes extends BasicAttributes<Expansion> {
 export enum Expansion {
     SOR = "Spark of Rebellion",
     SHD = "Shadows of the Galaxy",
+    TWI = "Twilight of the Republic",
 }
