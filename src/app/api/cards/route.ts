@@ -1,6 +1,11 @@
+import { Expansion } from "@/types/card/attributes/Expansion";
+import { NextRequest } from "next/server";
 import { getAllCards } from "./swu";
 
-export async function GET() {
-    const cards = await getAllCards({});
+export async function GET({ nextUrl: { searchParams } }: NextRequest) {
+    const set = searchParams.get("set")
+        ? Expansion[searchParams.get("set") as keyof typeof Expansion]
+        : Expansion.TWI;
+    const cards = await getAllCards({ set });
     return Response.json(cards);
 }
