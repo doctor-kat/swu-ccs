@@ -13,7 +13,7 @@ export async function getCardsPage({
     set = Expansion.TWI,
     page = 1,
 }): Promise<CardsResponse> {
-    const url = `https://admin.starwarsunlimited.com/api/cards`;
+    const url = `https://admin.starwarsunlimited.com/api/card-list`;
     const params = new URLSearchParams({
         locale,
         "orderBy[expansion][id]": "asc",
