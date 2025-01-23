@@ -46,7 +46,7 @@ const LeftNav: React.FC<NavProps> = ({ open, setOpen, cards }) => {
             <Toolbar />
             <Box sx={{ overflow: open ? "auto" : "hidden" }}>
                 <List>
-                    {["SOR", "SHD", "TWI"].map((set) => (
+                    {["SOR", "SHD", "TWI", "JTL"].map((set) => (
                         <ListItem key={set}>
                             <a href={`/?set=${set}&count=6`}>
                                 <ListItemButton>

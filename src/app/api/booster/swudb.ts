@@ -17,6 +17,7 @@ export function swuCardToSWUDBCardEntry({
         [Expansion.SOR]: "SOR",
         [Expansion.SHD]: "SHD",
         [Expansion.TWI]: "TWI",
+        [Expansion.JTL]: "JTL",
     }[expansion];
     return {
         id: `${set}_${cardNumber.toString().padStart(3, "0")}`,

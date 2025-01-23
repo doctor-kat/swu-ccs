@@ -8,7 +8,7 @@ import { generateBooster } from "./generateBooster";
 export async function GET({ nextUrl: { searchParams } }: NextRequest) {
     const set = searchParams.get("set")
         ? Expansion[searchParams.get("set") as keyof typeof Expansion]
-        : Expansion.TWI;
+        : Expansion.JTL;
     const count = searchParams.get("count") ?? 6;
     const allCards = cache(async () => await getAllCards({ set }));
     const cards: Card[] = await generateBooster({

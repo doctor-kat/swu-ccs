@@ -14,4 +14,5 @@ export enum Expansion {
     SOR = "Spark of Rebellion",
     SHD = "Shadows of the Galaxy",
     TWI = "Twilight of the Republic",
+    JTL = "Jump to Lightspeed",
 }

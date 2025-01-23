@@ -45,7 +45,7 @@ export default function Home() {
 
     useEffect(() => {
         fetch(
-            `/api/booster?set=${set ?? "TWI"}&count=${count ? Number(count) : 6}`,
+            `/api/booster?set=${set ?? "JTL"}&count=${count ? Number(count) : 6}`,
             {
                 cache: "no-store",
             },

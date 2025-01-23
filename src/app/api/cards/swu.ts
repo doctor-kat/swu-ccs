@@ -6,11 +6,12 @@ const expansionMap: Record<Expansion, string> = {
     [Expansion.SOR]: "2",
     [Expansion.SHD]: "8",
     [Expansion.TWI]: "18",
+    [Expansion.JTL]: "23",
 };
 
 export async function getCardsPage({
     locale = "en",
-    set = Expansion.TWI,
+    set = Expansion.JTL,
     page = 1,
 }): Promise<CardsResponse> {
     const url = `https://admin.starwarsunlimited.com/api/card-list`;
