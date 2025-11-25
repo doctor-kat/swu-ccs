@@ -19,11 +19,11 @@ import {
     Paper,
     Stack,
     Toolbar,
-    Typography,
+    Typography
 } from "@mui/material";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import LeftNav from "./LeftNav";
 
 export default function Home() {
@@ -56,11 +56,18 @@ export default function Home() {
             });
     }, [set, count]);
 
-    const filteredCards = applyFilterGroup({
-        filterGroup,
-        cards: booster,
-    });
-    const group = groupBy(filteredCards, grouping);
+    const filteredCards = useMemo(
+        () =>
+            applyFilterGroup({
+                filterGroup,
+                cards: booster,
+            }),
+        [filterGroup, booster],
+    );
+    const group = useMemo(
+        () => groupBy(filteredCards, grouping),
+        [filteredCards, grouping],
+    );
     return (
         <GlobalContext.Provider
             value={{
@@ -149,7 +156,7 @@ export default function Home() {
                                                 boxShadow: 1,
                                             },
                                     }}
-                                    defaultExpanded
+                                    defaultExpanded={Object.keys(group).length <= 3}
                                 >
                                     <AccordionSummary
                                         expandIcon={<ExpandCircleDown />}
@@ -158,10 +165,10 @@ export default function Home() {
                                     </AccordionSummary>
                                     <AccordionDetails>
                                         <Grid container gap={1}>
-                                            {cards.map((card, i) => (
+                                            {cards.map((card) => (
                                                 <Grid
                                                     item
-                                                    key={i}
+                                                    key={card.id}
                                                     sx={{
                                                         width: card.attributes
                                                             .artFront.data
@@ -195,6 +202,9 @@ export default function Home() {
                                                                 .formats.card
                                                                 .height
                                                         }
+                                                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                                        loading="lazy"
+                                                        quality={85}
                                                     />
                                                 </Grid>
                                             ))}
